@@ -1,0 +1,24 @@
+.type ADT = A = symbol | B = number
+.type ADTList =  [next: ADTList, x:ADT]
+.decl l(x:ADTList)
+l([nil,@ADT A "Java" ]).
+l([r,@ADT B 1]) :- l(r) , r = [nil,@ADT A "Java"].
+l([r1,@ADT B x+1 ]) :- l(r1), r1 = [r2, @ADT B x], x<5.
+
+.decl F(x:ADT)
+F(x):- l([_, x]).
+
+.output F
+
+/*Output-
+---------------
+F
+x
+===============
+A Java
+B 1
+B 2
+B 3
+B 4
+B 5
+===============*/

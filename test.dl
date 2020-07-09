@@ -1,0 +1,8 @@
+.type RecordVariant = [xn:number | y:float | z:symbol]
+
+
+.decl A(x:RecordVariant)
+.decl B(xn:number)
+
+B(y) :- A([xn: y])
+ .output B

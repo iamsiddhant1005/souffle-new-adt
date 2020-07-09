@@ -1,0 +1,61 @@
+.type NullRecord = []
+.type ADT
+  = A0  NullRecord   
+  | A1 []              declare a record inline. inlined implicitly declares a record type with the same name.
+  | B   symbol
+  | C   symbol       // branches can have the same RHS, but not the same name
+  | D  [ c0: symbol, c1: number ]
+  | E  [ e0: number ]
+  | F   number
+
+// The equals symbol in the previous defintion has been ommitted.
+
+.decl d(x: D)        
+d([ "foo", 5 ]).      // This representation is enough.
+d(@D [ "bar", 100 ]). // not required
+
+.decl a(result: ADT)
+a(A0 []).                
+a(A1 x) :- x = [].       
+a(B "hello").                   
+a(C "bye").                     
+a(D x) :- d(x).                 
+a(E [ -1 ]).                    
+a(E [ -5 ]).                  
+a(F 6 * 9).
+
+.decl b(result: number)
+b(x) :- x < -2, a(E [ x ]).
+b(x) :- a( D [ _, x ]).
+b(x) :- x = 42, a( F x).
+
+.output a
+.output b
+
+
+
+This is a good representation for ADTs because
+ 1. The type checking could be just done by just verifying the
+    branch i.e. if the branch exists for the ADT and the verifying the 
+    type of value that is stored. For ex. 
+    For a(C "bye") we could first check that if C belongs as a branch to
+    ADT and then verify whether "bye" has a type assigned to C which is  
+    a string here.
+
+2. The case of ambiguity is also solved here because
+   For ex.
+   .type Ambig = Foo [ x: number ] | Bar [ x: number ] | Baz [ x: string ]
+	.decl b(x: Ambig)
+	b([ 5 ]). // ERROR: ambig between `Foo` and `Bar`
+	b([ "x" ]). // OK: only one branch matching record `[ string ]`  
+
+	when changed to new format becomes
+
+    type Ambig = Foo [ x: number ] | Bar [ x: number ] | Baz [ x: string ]
+	.decl b(x: Ambig)
+	b(Foo [ 5 ]).
+	b(Boo [ 6 ]). 
+	b(Baz [ "x" ]). 
+	
+	No ambiguity remains when a numerical value is assigned.
+

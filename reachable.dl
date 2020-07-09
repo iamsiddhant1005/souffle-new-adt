@@ -1,0 +1,31 @@
+.type NullRecord = []
+.type ADT
+  = A0 = NullRecord   // branches can refer to existing types
+  | A1 []             // or declare a record inline. inlined implicitly declares a record type with the same name.
+  | B  = symbol
+  | C  = symbol       // branches can have the same RHS, but not the same name
+  | D  [ c0: symbol, c1: number ]
+  | E  [ e0: number ]
+  | F  = number
+
+.decl d(x: D)         // can use the record type of an ADT-styled sum branch
+d([ "foo", 5 ]).
+d(@D [ "bar", 100 ]). // explicitly specify record type (optional)
+
+.decl a(result: ADT)
+a(@ADT A0 []).
+a(@ADT A1 x) :- x = [].
+a(@ADT B "hello").
+a(@ADT C "bye").
+a(@ADT D x) :- d(x).
+a(@ADT E [ -1 ]).
+a(@ADT E [ -5 ]).
+a(@ADT F 6 * 9).
+
+.decl b(result: number)
+b(x) :- x < -2, a(@ADT E [ x ]).
+b(x) :- a(@ADT D [ _, x ]).
+b(x) :- x = 42, a(@ADT F x).
+
+.output a
+.output b

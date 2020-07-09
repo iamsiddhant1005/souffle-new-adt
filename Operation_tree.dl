@@ -1,0 +1,37 @@
+.type ADT = Op = symbol | Val = number
+.type ADTList =  [left: ADTList, x:ADT, right: ADTList]
+.decl l(x:ADTList)
+l([nil,@ADT Val 2,nil ]).
+l([nil,@ADT Val 5,nil ]).
+l([nil,@ADT Val 3,nil ]).
+l([r1,@ADT Op "+",r2]):-l(r1), l(r2), r1= [nil,@ADT Val 5,nil ], r2= [nil,@ADT Val 3,nil ].
+l([r1,@ADT Op "-",r2]):-l(r1),l(r2), r1= [r3,@ADT Op "+",r4], r2=[nil,@ADT Val 2,nil ].
+
+
+.decl Eval(x:ADT, y:ADTList)
+Eval(@ADT Val 0, nil).
+Eval(@ADT Val (v1 - v2),y):- y=[r1,@ADT Op "-",r2],l([r1,@ADT Op "-",r2]),  Eval(@ADT Val v1,r1) , Eval(@ADT Val v2,r2).
+Eval(@ADT Val (v1 + v2),y):- y=[r1,@ADT Op "+",r2],l([r1,@ADT Op "+",r2]),  Eval(@ADT Val v1,r1) , Eval(@ADT Val v2,r2).
+Eval(@ADT Val x,y):- y=[nil,@ADT Val x,nil],l([nil,@ADT Val x,nil]).
+
+
+.decl F(x:ADT)
+F(x):- Eval(x,_).
+.output F
+
+
+
+
+/*Output -
+ ---------------
+F
+x
+===============
+Val 2
+Val 5                   /*Operation tree
+Val 3					           -
+Val 0                            /   \
+Val 8                          +       2
+Val 6 // Final answer         / \   
+===============              5   3 */
+*/

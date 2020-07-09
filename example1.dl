@@ -1,0 +1,12 @@
+.type ADT = A = symbol | B = symbol | C = number
+.decl a(x:ADT)
+a(@ADT A "a").
+a(@ADT B "A").
+a(@ADT C 1).
+a(1). // accept this in unambiguous case
+a("b").// unacceptable in amibiguous case
+.output a
+
+
+//Output-
+//error in the lines 6 and 7

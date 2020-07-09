@@ -1,0 +1,32 @@
+.type ADT = Odd = number | Even = number
+.type ADTList =  [next: ADTList, x:ADT]
+.decl l(x:ADTList)
+l([nil,@ADT Even 0 ]).
+l([r,@ADT Odd 1]) :- l(r) , r = [nil,@ADT Even 0].
+
+l([r1,@ADT Odd x+2 ]) :- l(r1), l(r2), r1 = [r2, @ADT Even x+1], r2 = [r3, @ADT Odd x], x<9. 
+l([r1,@ADT Even x+2 ]) :- l(r1), l(r2) ,r1 = [r2, @ADT Odd x+1], r2 = [r3, @ADT Even x], x<10. 
+
+.decl F(x:ADT)
+F(x):- l([_,x]).
+
+.output F
+
+/*Output-
+----------------
+---------------
+F
+x
+===============
+Even 0
+Odd 1
+Even 2
+Odd 3
+Even 4
+Odd 5
+Even 6
+Odd 7
+Even 8
+Odd 9
+Even 10
+===============*/
